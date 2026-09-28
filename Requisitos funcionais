@@ -1,4 +1,4 @@
-| ID   | Requisito Funcional                    | Descrição                                                                                                |
+| ID   | Requisito                              | Descrição                                                                                                |
 | ---- | -------------------------------------- | -------------------------------------------------------------------------------------------------------- |
 | RF01 | Pesquisar receitas                     | O sistema deve permitir que o usuário pesquise receitas pelo nome.                                       |
 | RF02 | Consultar API                          | O sistema deve buscar informações das receitas em uma API JSON externa.                                  |
