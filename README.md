@@ -232,9 +232,9 @@ Nela estão disponíveis:
 
 | Integrante                       | Responsabilidade |
 | -------------------------------- | ---------------- |
-| **Ana Beatriz Barreto Teixeira** | A definir        |
-| **Livia Pontes Argenton**        | A definir        |
-| **João Miguel Dias Rosa**        | A definir        |
+| **Ana Beatriz Barreto Teixeira** | Interface e detalhes  |
+| **Livia Pontes Argenton**        | Favoritos e filtros   |
+| **João Miguel Dias Rosa**        | API e pesquisa        |
 
 Cada integrante será responsável por uma parte definida da aplicação e deverá registrar suas atividades por meio de commits no GitHub.
 
