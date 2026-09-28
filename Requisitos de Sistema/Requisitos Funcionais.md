@@ -1,0 +1,16 @@
+# Requisitos Funcionais
+
+| ID | Requisito | Descrição |
+|---|---|---|
+| RF01 | Pesquisar receitas | O sistema deve permitir que o usuário pesquise receitas pelo nome. |
+| RF02 | Consultar API | O sistema deve buscar informações das receitas em uma API JSON externa. |
+| RF03 | Exibir receitas | O sistema deve apresentar as receitas encontradas na tela. |
+| RF04 | Visualizar detalhes | O usuário deve poder visualizar os detalhes de uma receita, como ingredientes, imagem e modo de preparo. |
+| RF05 | Favoritar receita | O usuário deve poder adicionar uma receita aos favoritos. |
+| RF06 | Remover dos favoritos | O usuário deve poder remover uma receita da lista de favoritos. |
+| RF07 | Visualizar favoritos | O sistema deve permitir que o usuário visualize suas receitas favoritas. |
+| RF08 | Filtrar receitas | O sistema deve permitir filtrar receitas por categoria. |
+| RF09 | Buscar por ingrediente | O sistema deve permitir pesquisar receitas utilizando um ingrediente. |
+| RF10 | Informar quando não encontrar receitas | O sistema deve apresentar uma mensagem quando nenhuma receita for encontrada. |
+| RF11 | Informar carregamento | O sistema deve apresentar uma indicação enquanto as receitas estão sendo carregadas. |
+| RF12 | Exibir erros | O sistema deve informar o usuário caso ocorra algum erro ao buscar os dados da API. |
