@@ -1,37 +1,65 @@
 import { useState } from 'react'
 import { Container, Navbar, Nav, Form, Button, Row, Col } from 'react-bootstrap'
 import CardReceita from './components/CardReceita/CardReceita'
+import ModalReceita from './components/ModalReceita/ModalReceita'
+import { buscarReceitas, buscarReceitaPorId } from './services/api'
 import './App.css'
 
 function App() {
   const [pesquisa, setPesquisa] = useState('')
   const [categoria, setCategoria] = useState('Todas')
   const [pagina, setPagina] = useState('explorar')
+  const [receitas, setReceitas] = useState([])
+  const [carregando, setCarregando] = useState(false)
+  const [erro, setErro] = useState('')
+  const [receitaSelecionada, setReceitaSelecionada] = useState(null)
+  const [mostrarModal, setMostrarModal] = useState(false)
 
-  const receitasExemplo = [
-    {
-      id: 52772,
-      nome: 'Teriyaki Chicken Casserole',
-      categoria: 'Chicken',
-      imagem: 'https://www.themealdb.com/images/media/meals/wvpsxx1468256321.jpg'
-    },
-    {
-      id: 52771,
-      nome: 'Spicy Arrabiata Penne',
-      categoria: 'Vegetarian',
-      imagem: 'https://www.themealdb.com/images/media/meals/ustsqw1468250014.jpg'
-    },
-    {
-      id: 52893,
-      nome: 'Apple & Blackberry Crumble',
-      categoria: 'Dessert',
-      imagem: 'https://www.themealdb.com/images/media/meals/xvsurr1511719182.jpg'
-    }
-  ]
-
-  function pesquisarReceitas(event) {
+  async function pesquisarReceitas(event) {
     event.preventDefault()
-    alert('Em breve vamos buscar: ' + pesquisa)
+
+    if (!pesquisa.trim()) {
+      return
+    }
+
+    setCarregando(true)
+    setErro('')
+
+    try {
+      const dados = await buscarReceitas(pesquisa)
+
+      const receitasFormatadas = dados.map((receita) => ({
+        id: receita.idMeal,
+        nome: receita.strMeal,
+        categoria: receita.strCategory,
+        imagem: receita.strMealThumb
+      }))
+
+      setReceitas(receitasFormatadas)
+    } catch (error) {
+      setErro('Não foi possível buscar as receitas.')
+      setReceitas([])
+    } finally {
+      setCarregando(false)
+    }
+  }
+
+  async function abrirDetalhes(receita) {
+    try {
+      setErro('')
+
+      const dados = await buscarReceitaPorId(receita.id)
+
+      setReceitaSelecionada(dados)
+      setMostrarModal(true)
+    } catch (error) {
+      setErro('Não foi possível carregar os detalhes da receita.')
+    }
+  }
+
+  function fecharModal() {
+    setMostrarModal(false)
+    setReceitaSelecionada(null)
   }
 
   return (
@@ -110,49 +138,105 @@ function App() {
           </div>
 
           {pagina === 'explorar' && (
-            <Form.Group className="filtro-categoria">
-              <Form.Label>
-                Categoria
-              </Form.Label>
+            <>
+              <Form.Group className="filtro-categoria">
+                <Form.Label>
+                  Categoria
+                </Form.Label>
 
-              <Form.Select
-                value={categoria}
-                onChange={(event) =>
-                  setCategoria(event.target.value)
-                }
-              >
-                <option>Todas</option>
-                <option>Café da manhã</option>
-                <option>Doces</option>
-                <option>Carne</option>
-                <option>Massas</option>
-                <option>Sopas</option>
-                <option>Vegetariano</option>
-              </Form.Select>
-            </Form.Group>
-          )}
-
-          {pagina === 'explorar' && (
-            <Row className="mt-4 g-4">
-              {receitasExemplo.map((receita) => (
-                <Col
-                  key={receita.id}
-                  xs={12}
-                  sm={6}
-                  lg={4}
+                <Form.Select
+                  value={categoria}
+                  onChange={(event) =>
+                    setCategoria(event.target.value)
+                  }
                 >
-                  <CardReceita
-                    receita={receita}
-                    onVerDetalhes={(receitaSelecionada) =>
-                      alert(
-                        'Você selecionou: ' +
-                        receitaSelecionada.nome
-                      )
-                    }
-                  />
-                </Col>
-              ))}
-            </Row>
+                  <option>Todas</option>
+                  <option>Breakfast</option>
+                  <option>Dessert</option>
+                  <option>Beef</option>
+                  <option>Chicken</option>
+                  <option>Pasta</option>
+                  <option>Seafood</option>
+                  <option>Vegetarian</option>
+                </Form.Select>
+              </Form.Group>
+
+              {carregando && (
+                <div className="estado-vazio">
+                  <div className="card-body">
+                    <div className="icone-vazio">
+                      🍳
+                    </div>
+
+                    <h3>
+                      Buscando receitas...
+                    </h3>
+
+                    <p>
+                      Aguarde enquanto procuramos receitas.
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {!carregando && erro && (
+                <div className="estado-vazio">
+                  <div className="card-body">
+                    <div className="icone-vazio">
+                      😕
+                    </div>
+
+                    <h3>
+                      Ocorreu um erro
+                    </h3>
+
+                    <p>
+                      {erro}
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {!carregando &&
+                !erro &&
+                receitas.length === 0 && (
+                  <div className="estado-vazio">
+                    <div className="card-body">
+                      <div className="icone-vazio">
+                        🥗
+                      </div>
+
+                      <h3>
+                        Suas próximas receitas começam aqui!
+                      </h3>
+
+                      <p>
+                        Pesquise uma receita para descobrir novos pratos.
+                      </p>
+                    </div>
+                  </div>
+                )}
+
+              {!carregando &&
+                !erro &&
+                receitas.length > 0 && (
+                  <Row className="mt-4 g-4">
+                    {receitas.map((receita) => (
+                      <Col
+                        key={receita.id}
+                        xs={12}
+                        sm={6}
+                        lg={4}
+                      >
+                        <CardReceita
+                          receita={receita}
+                          onVerDetalhes={abrirDetalhes}
+                        />
+                      </Col>
+                    ))}
+                  </Row>
+                )}
+            </>
           )}
 
           {pagina === 'favoritos' && (
@@ -161,7 +245,7 @@ function App() {
                 <div className="estado-vazio">
                   <div className="card-body">
                     <div className="icone-vazio">
-                      🥗
+                      ❤️
                     </div>
 
                     <h3>
@@ -190,6 +274,12 @@ function App() {
           🍃 OrganizaReceitas — descubra, prepare e aproveite.
         </p>
       </footer>
+
+      <ModalReceita
+        receita={receitaSelecionada}
+        mostrar={mostrarModal}
+        onFechar={fecharModal}
+      />
     </div>
   )
 }

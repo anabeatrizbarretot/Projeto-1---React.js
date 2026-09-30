@@ -1,0 +1,103 @@
+.modal-imagem-receita {
+  width: 100%;
+  max-height: 420px;
+  object-fit: cover;
+  border-radius: 15px;
+  margin-bottom: 25px;
+}
+
+.informacoes-receita {
+  display: flex;
+  gap: 40px;
+  flex-wrap: wrap;
+  padding: 10px 0 25px;
+  border-bottom: 1px solid #e6ebe3;
+}
+
+.informacoes-receita > div {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.informacoes-receita strong {
+  color: #28382d;
+  font-size: 15px;
+}
+
+.informacoes-receita span {
+  color: #68766b;
+}
+
+.informacoes-receita .badge {
+  width: fit-content;
+  background-color: #e5f1e5 !important;
+  color: #36764a !important;
+  font-weight: 600;
+  padding: 7px 12px;
+}
+
+.secao-detalhes {
+  margin-top: 30px;
+}
+
+.secao-detalhes h3 {
+  color: #28382d;
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 18px;
+}
+
+.lista-ingredientes {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.ingrediente {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 12px 15px;
+  background-color: #f8faf6;
+  border-radius: 9px;
+}
+
+.ingrediente span {
+  color: #3f5044;
+}
+
+.ingrediente strong {
+  color: #36764a;
+  text-align: right;
+}
+
+.modo-preparo {
+  color: #536456;
+  font-size: 16px;
+  line-height: 1.8;
+  white-space: pre-line;
+}
+
+@media (max-width: 576px) {
+  .modal-imagem-receita {
+    max-height: 280px;
+  }
+
+  .informacoes-receita {
+    gap: 20px;
+  }
+
+  .secao-detalhes h3 {
+    font-size: 21px;
+  }
+
+  .ingrediente {
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .ingrediente strong {
+    text-align: left;
+  }
+}

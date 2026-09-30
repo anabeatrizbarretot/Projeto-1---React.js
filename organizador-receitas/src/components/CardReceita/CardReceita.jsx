@@ -2,8 +2,22 @@ import { Card, Button } from 'react-bootstrap'
 import './CardReceita.css'
 
 function CardReceita({ receita, onVerDetalhes }) {
+  function abrirDetalhes() {
+    onVerDetalhes(receita)
+  }
+
   return (
-    <Card className="card-receita">
+    <Card
+      className="card-receita"
+      onClick={abrirDetalhes}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(event) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          abrirDetalhes()
+        }
+      }}
+    >
       <Card.Img
         variant="top"
         src={receita.imagem}
@@ -22,7 +36,10 @@ function CardReceita({ receita, onVerDetalhes }) {
 
         <Button
           className="botao-detalhes"
-          onClick={() => onVerDetalhes(receita)}
+          onClick={(event) => {
+            event.stopPropagation()
+            abrirDetalhes()
+          }}
         >
           Ver detalhes
         </Button>
