@@ -22,11 +22,12 @@
 
 .informacoes-receita strong {
   color: #28382d;
-  font-size: 15px;
+  font-size: 18px;
 }
 
 .informacoes-receita span {
   color: #68766b;
+  font-size: 20px;
 }
 
 .informacoes-receita .badge {
@@ -34,7 +35,8 @@
   background-color: #e5f1e5 !important;
   color: #36764a !important;
   font-weight: 600;
-  padding: 7px 12px;
+  padding: 9px 15px;
+  font-size: 18px;
 }
 
 .secao-detalhes {
@@ -43,9 +45,9 @@
 
 .secao-detalhes h3 {
   color: #28382d;
-  font-size: 24px;
+  font-size: 28px;
   font-weight: bold;
-  margin-bottom: 18px;
+  margin-bottom: 20px;
 }
 
 .lista-ingredientes {
@@ -58,23 +60,25 @@
   display: flex;
   justify-content: space-between;
   gap: 20px;
-  padding: 12px 15px;
+  padding: 16px 18px;
   background-color: #f8faf6;
-  border-radius: 9px;
+  border-radius: 10px;
 }
 
 .ingrediente span {
   color: #3f5044;
+  font-size: 20px;
 }
 
 .ingrediente strong {
   color: #36764a;
   text-align: right;
+  font-size: 20px;
 }
 
 .modo-preparo {
   color: #536456;
-  font-size: 16px;
+  font-size: 22px;
   line-height: 1.8;
   white-space: pre-line;
 }
@@ -88,16 +92,39 @@
     gap: 20px;
   }
 
+  .informacoes-receita strong {
+    font-size: 17px;
+  }
+
+  .informacoes-receita span {
+    font-size: 18px;
+  }
+
+  .informacoes-receita .badge {
+    font-size: 17px;
+    padding: 8px 13px;
+  }
+
   .secao-detalhes h3 {
-    font-size: 21px;
+    font-size: 22px;
   }
 
   .ingrediente {
     flex-direction: column;
     gap: 5px;
+    padding: 16px 18px;
+  }
+
+  .ingrediente span {
+    font-size: 20px;
   }
 
   .ingrediente strong {
     text-align: left;
+    font-size: 20px;
+  }
+
+  .modo-preparo {
+    font-size: 18px;
   }
 }
