@@ -1,12 +1,33 @@
-
 import { useState } from 'react'
-import { Container, Navbar, Nav, Form, Button, Row, Col, Card } from 'react-bootstrap'
+import { Container, Navbar, Nav, Form, Button, Row, Col } from 'react-bootstrap'
+import CardReceita from './components/CardReceita/CardReceita'
 import './App.css'
 
 function App() {
   const [pesquisa, setPesquisa] = useState('')
   const [categoria, setCategoria] = useState('Todas')
   const [pagina, setPagina] = useState('explorar')
+
+  const receitasExemplo = [
+    {
+      id: 52772,
+      nome: 'Teriyaki Chicken Casserole',
+      categoria: 'Chicken',
+      imagem: 'https://www.themealdb.com/images/media/meals/wvpsxx1468256321.jpg'
+    },
+    {
+      id: 52771,
+      nome: 'Spicy Arrabiata Penne',
+      categoria: 'Vegetarian',
+      imagem: 'https://www.themealdb.com/images/media/meals/ustsqw1468250014.jpg'
+    },
+    {
+      id: 52893,
+      nome: 'Apple & Blackberry Crumble',
+      categoria: 'Dessert',
+      imagem: 'https://www.themealdb.com/images/media/meals/xvsurr1511719182.jpg'
+    }
+  ]
 
   function pesquisarReceitas(event) {
     event.preventDefault()
@@ -18,7 +39,7 @@ function App() {
       <Navbar expand="lg" className="navbar-receitas">
         <Container>
           <Navbar.Brand className="marca">
-             OrganizaReceitas
+            OrganizaReceitas
           </Navbar.Brand>
 
           <Nav className="ms-auto">
@@ -33,7 +54,7 @@ function App() {
               active={pagina === 'favoritos'}
               onClick={() => setPagina('favoritos')}
             >
-               Favoritas
+              Favoritas
             </Nav.Link>
           </Nav>
         </Container>
@@ -41,7 +62,9 @@ function App() {
 
       <Container className="conteudo">
         <section className="apresentacao">
-          <span className="etiqueta">SUA COZINHA, ORGANIZADA</span>
+          <span className="etiqueta">
+            SUA COZINHA, ORGANIZADA
+          </span>
 
           <h1>
             O que vamos <span>cozinhar</span> hoje?
@@ -52,7 +75,10 @@ function App() {
             suas favoritas em um só lugar.
           </p>
 
-          <Form onSubmit={pesquisarReceitas} className="form-pesquisa">
+          <Form
+            onSubmit={pesquisarReceitas}
+            className="form-pesquisa"
+          >
             <Form.Control
               type="text"
               placeholder="Digite o nome de uma receita..."
@@ -61,7 +87,7 @@ function App() {
             />
 
             <Button type="submit">
-               Pesquisar
+              Pesquisar
             </Button>
           </Form>
         </section>
@@ -70,7 +96,9 @@ function App() {
           <div className="titulo-secao">
             <div>
               <h2>
-                {pagina === 'explorar' ? 'Explore receitas' : 'Minhas favoritas'}
+                {pagina === 'explorar'
+                  ? 'Explore receitas'
+                  : 'Minhas favoritas'}
               </h2>
 
               <p>
@@ -83,55 +111,84 @@ function App() {
 
           {pagina === 'explorar' && (
             <Form.Group className="filtro-categoria">
-              <Form.Label>Categoria</Form.Label>
+              <Form.Label>
+                Categoria
+              </Form.Label>
 
               <Form.Select
                 value={categoria}
-                onChange={(event) => setCategoria(event.target.value)}
+                onChange={(event) =>
+                  setCategoria(event.target.value)
+                }
               >
                 <option>Todas</option>
-                <option>Breakfast</option>
-                <option>Chicken</option>
-                <option>Dessert</option>
-                <option>Pasta</option>
-                <option>Seafood</option>
-                <option>Vegetarian</option>
+                <option>Café da manhã</option>
+                <option>Doces</option>
+                <option>Carne</option>
+                <option>Massas</option>
+                <option>Sopas</option>
+                <option>Vegetariano</option>
               </Form.Select>
             </Form.Group>
           )}
 
-          <Row className="mt-4">
-            <Col>
-              <Card className="estado-vazio">
-                <Card.Body>
-                  <div className="icone-vazio">🥗</div>
+          {pagina === 'explorar' && (
+            <Row className="mt-4 g-4">
+              {receitasExemplo.map((receita) => (
+                <Col
+                  key={receita.id}
+                  xs={12}
+                  sm={6}
+                  lg={4}
+                >
+                  <CardReceita
+                    receita={receita}
+                    onVerDetalhes={(receitaSelecionada) =>
+                      alert(
+                        'Você selecionou: ' +
+                        receitaSelecionada.nome
+                      )
+                    }
+                  />
+                </Col>
+              ))}
+            </Row>
+          )}
 
-                  <h3>
-                    {pagina === 'explorar'
-                      ? 'Suas próximas receitas começam aqui!'
-                      : 'Você ainda não tem favoritas'}
-                  </h3>
+          {pagina === 'favoritos' && (
+            <Row className="mt-4">
+              <Col>
+                <div className="estado-vazio">
+                  <div className="card-body">
+                    <div className="icone-vazio">
+                      🥗
+                    </div>
 
-                  <p>
-                    {pagina === 'explorar'
-                      ? 'Pesquise uma receita para descobrir novos pratos.'
-                      : 'Explore receitas e salve as que mais gostar.'}
-                  </p>
+                    <h3>
+                      Você ainda não tem favoritas
+                    </h3>
 
-                  {pagina === 'favoritos' && (
-                    <Button onClick={() => setPagina('explorar')}>
+                    <p>
+                      Explore receitas e salve as que mais gostar.
+                    </p>
+
+                    <Button
+                      onClick={() => setPagina('explorar')}
+                    >
                       Explorar receitas
                     </Button>
-                  )}
-                </Card.Body>
-              </Card>
-            </Col>
-          </Row>
+                  </div>
+                </div>
+              </Col>
+            </Row>
+          )}
         </section>
       </Container>
 
       <footer className="rodape">
-        <p>🍃 OrganizaReceitas — descubra, prepare e aproveite.</p>
+        <p>
+          🍃 OrganizaReceitas — descubra, prepare e aproveite.
+        </p>
       </footer>
     </div>
   )
