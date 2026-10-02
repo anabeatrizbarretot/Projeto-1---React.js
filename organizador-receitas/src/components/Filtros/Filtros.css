@@ -1,0 +1,24 @@
+.filtro-linha {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.limpar-filtro {
+  color: #36764a;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.limpar-filtro:hover {
+  color: #285b39;
+  text-decoration: underline;
+}
+
+.total-resultados {
+  display: block;
+  margin-top: 8px;
+  color: #758075;
+  font-size: 15px;
+}

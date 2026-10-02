@@ -1,7 +1,8 @@
 import { Modal, Button, Badge } from 'react-bootstrap'
+import { formatarReceita } from '../../services/api'
 import './ModalReceita.css'
 
-function ModalReceita({ receita, mostrar, onFechar }) {
+function ModalReceita({ receita, mostrar, favorita = false, onToggleFavorito, onFechar }) {
   if (!receita) {
     return null
   }
@@ -89,6 +90,13 @@ function ModalReceita({ receita, mostrar, onFechar }) {
 
       <Modal.Footer>
         <Button
+          variant={favorita ? 'outline-danger' : 'success'}
+          onClick={() => onToggleFavorito(formatarReceita(receita))}
+        >
+          {favorita ? '❤️ Remover dos favoritos' : '🤍 Adicionar aos favoritos'}
+        </Button>
+
+        <Button
           variant="secondary"
           onClick={onFechar}
         >
@@ -99,4 +107,4 @@ function ModalReceita({ receita, mostrar, onFechar }) {
   )
 }
 
-export default ModalReceita
+export default ModalReceita

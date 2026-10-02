@@ -1,19 +1,118 @@
-import { useState } from 'react'
-import { Container, Navbar, Nav, Form, Button, Row, Col } from 'react-bootstrap'
+import { useEffect, useMemo, useReducer, useRef, useState } from 'react'
+import { Container, Navbar, Nav, Form, Button, Row, Col, Badge, Alert } from 'react-bootstrap'
 import CardReceita from './components/CardReceita/CardReceita'
 import ModalReceita from './components/ModalReceita/ModalReceita'
-import { buscarReceitas, buscarReceitaPorId } from './services/api'
+import Filtros from './components/Filtros/Filtros'
+import Favoritos from './components/Favoritos/Favoritos'
+import {
+  buscarReceitas,
+  buscarReceitaPorId,
+  buscarPorCategoria,
+  listarCategorias,
+  formatarReceita
+} from './services/api'
+import {
+  ACOES,
+  TODAS,
+  iniciarEstado,
+  receitasReducer,
+  salvarFavoritos
+} from './reducers/receitasReducer'
 import './App.css'
 
+// Usadas enquanto a lista de categorias da API não chega (ou se ela falhar)
+const CATEGORIAS_PADRAO = [
+  'Beef',
+  'Breakfast',
+  'Chicken',
+  'Dessert',
+  'Pasta',
+  'Seafood',
+  'Vegetarian'
+]
+
 function App() {
+  const [estado, dispatch] = useReducer(
+    receitasReducer,
+    undefined,
+    iniciarEstado
+  )
+  const { favoritos, categoriaExplorar, categoriaFavoritos } = estado
+
   const [pesquisa, setPesquisa] = useState('')
-  const [categoria, setCategoria] = useState('Todas')
+  const [termoBuscado, setTermoBuscado] = useState('')
   const [pagina, setPagina] = useState('explorar')
   const [receitas, setReceitas] = useState([])
+  const [categorias, setCategorias] = useState(CATEGORIAS_PADRAO)
   const [carregando, setCarregando] = useState(false)
   const [erro, setErro] = useState('')
   const [receitaSelecionada, setReceitaSelecionada] = useState(null)
   const [mostrarModal, setMostrarModal] = useState(false)
+
+  // evita que uma resposta antiga sobrescreva uma busca/filtro mais recente
+  const requisicaoAtual = useRef(0)
+
+  useEffect(() => {
+    salvarFavoritos(favoritos)
+  }, [favoritos])
+
+  useEffect(() => {
+    let ativo = true
+
+    listarCategorias()
+      .then((lista) => {
+        if (ativo && lista.length > 0) {
+          setCategorias(lista)
+        }
+      })
+      .catch(() => {
+        // mantém a lista padrão
+      })
+
+    return () => {
+      ativo = false
+    }
+  }, [])
+
+  const idsFavoritos = useMemo(
+    () => new Set(favoritos.map((favorito) => favorito.id)),
+    [favoritos]
+  )
+
+  // Com uma pesquisa feita, a categoria filtra os resultados já carregados.
+  // Sem pesquisa, a categoria é buscada direto na API (ver selecionarCategoria).
+  const receitasExibidas = useMemo(() => {
+    if (termoBuscado && categoriaExplorar !== TODAS) {
+      return receitas.filter(
+        (receita) => receita.categoria === categoriaExplorar
+      )
+    }
+
+    return receitas
+  }, [receitas, termoBuscado, categoriaExplorar])
+
+  const favoritosFiltrados = useMemo(() => {
+    if (categoriaFavoritos === TODAS) {
+      return favoritos
+    }
+
+    return favoritos.filter(
+      (favorito) => favorito.categoria === categoriaFavoritos
+    )
+  }, [favoritos, categoriaFavoritos])
+
+  // No filtro dos favoritos só aparecem categorias que existem nas favoritas
+  const categoriasFavoritas = useMemo(() => {
+    const lista = new Set(
+      favoritos.map((favorito) => favorito.categoria).filter(Boolean)
+    )
+
+    if (categoriaFavoritos !== TODAS) {
+      lista.add(categoriaFavoritos)
+    }
+
+    return [...lista].sort()
+  }, [favoritos, categoriaFavoritos])
 
   async function pesquisarReceitas(event) {
     event.preventDefault()
@@ -22,26 +121,104 @@ function App() {
       return
     }
 
+    const requisicao = ++requisicaoAtual.current
+
     setCarregando(true)
     setErro('')
 
     try {
       const dados = await buscarReceitas(pesquisa)
 
-      const receitasFormatadas = dados.map((receita) => ({
-        id: receita.idMeal,
-        nome: receita.strMeal,
-        categoria: receita.strCategory,
-        imagem: receita.strMealThumb
-      }))
+      if (requisicao !== requisicaoAtual.current) {
+        return
+      }
 
-      setReceitas(receitasFormatadas)
+      setReceitas(dados.map(formatarReceita))
+      setTermoBuscado(pesquisa.trim())
     } catch (error) {
+      if (requisicao !== requisicaoAtual.current) {
+        return
+      }
+
       setErro('Não foi possível buscar as receitas.')
       setReceitas([])
     } finally {
-      setCarregando(false)
+      if (requisicao === requisicaoAtual.current) {
+        setCarregando(false)
+      }
     }
+  }
+
+  async function carregarPorCategoria(categoria) {
+    const requisicao = ++requisicaoAtual.current
+
+    setCarregando(true)
+    setErro('')
+
+    try {
+      const dados = await buscarPorCategoria(categoria)
+
+      if (requisicao !== requisicaoAtual.current) {
+        return
+      }
+
+      setReceitas(dados.map(formatarReceita))
+    } catch (error) {
+      if (requisicao !== requisicaoAtual.current) {
+        return
+      }
+
+      setErro('Não foi possível filtrar as receitas.')
+      setReceitas([])
+    } finally {
+      if (requisicao === requisicaoAtual.current) {
+        setCarregando(false)
+      }
+    }
+  }
+
+  function selecionarCategoriaExplorar(categoria) {
+    dispatch({
+      type: ACOES.DEFINIR_CATEGORIA,
+      pagina: 'explorar',
+      categoria
+    })
+
+    // já existe uma pesquisa: o filtro é aplicado nos resultados (useMemo)
+    if (termoBuscado) {
+      return
+    }
+
+    if (categoria === TODAS) {
+      requisicaoAtual.current++
+      setReceitas([])
+      setErro('')
+      setCarregando(false)
+      return
+    }
+
+    carregarPorCategoria(categoria)
+  }
+
+  function selecionarCategoriaFavoritos(categoria) {
+    dispatch({
+      type: ACOES.DEFINIR_CATEGORIA,
+      pagina: 'favoritos',
+      categoria
+    })
+  }
+
+  function alternarFavorito(receita) {
+    if (idsFavoritos.has(receita.id)) {
+      dispatch({ type: ACOES.REMOVER_FAVORITO, id: receita.id })
+    } else {
+      dispatch({ type: ACOES.ADICIONAR_FAVORITO, receita })
+    }
+  }
+
+  function trocarPagina(novaPagina) {
+    setPagina(novaPagina)
+    setErro('')
   }
 
   async function abrirDetalhes(receita) {
@@ -62,6 +239,13 @@ function App() {
     setReceitaSelecionada(null)
   }
 
+  const filtroExplorarAtivo = categoriaExplorar !== TODAS
+  const mostrarSemResultados =
+    !carregando &&
+    !erro &&
+    receitasExibidas.length === 0 &&
+    (termoBuscado || filtroExplorarAtivo)
+
   return (
     <div className="app">
       <Navbar expand="lg" className="navbar-receitas">
@@ -73,16 +257,21 @@ function App() {
           <Nav className="ms-auto">
             <Nav.Link
               active={pagina === 'explorar'}
-              onClick={() => setPagina('explorar')}
+              onClick={() => trocarPagina('explorar')}
             >
               Explorar
             </Nav.Link>
 
             <Nav.Link
               active={pagina === 'favoritos'}
-              onClick={() => setPagina('favoritos')}
+              onClick={() => trocarPagina('favoritos')}
             >
               Favoritas
+              {favoritos.length > 0 && (
+                <Badge pill className="contador-favoritos">
+                  {favoritos.length}
+                </Badge>
+              )}
             </Nav.Link>
           </Nav>
         </Container>
@@ -104,7 +293,10 @@ function App() {
           </p>
 
           <Form
-            onSubmit={pesquisarReceitas}
+            onSubmit={(event) => {
+              trocarPagina('explorar')
+              pesquisarReceitas(event)
+            }}
             className="form-pesquisa"
           >
             <Form.Control
@@ -139,27 +331,17 @@ function App() {
 
           {pagina === 'explorar' && (
             <>
-              <Form.Group className="filtro-categoria">
-                <Form.Label>
-                  Categoria
-                </Form.Label>
-
-                <Form.Select
-                  value={categoria}
-                  onChange={(event) =>
-                    setCategoria(event.target.value)
-                  }
-                >
-                  <option>Todas</option>
-                  <option>Breakfast</option>
-                  <option>Dessert</option>
-                  <option>Beef</option>
-                  <option>Chicken</option>
-                  <option>Pasta</option>
-                  <option>Seafood</option>
-                  <option>Vegetarian</option>
-                </Form.Select>
-              </Form.Group>
+              <Filtros
+                id="filtro-categoria-explorar"
+                categorias={categorias}
+                categoriaSelecionada={categoriaExplorar}
+                onChange={selecionarCategoriaExplorar}
+                totalResultados={
+                  !carregando && !erro && receitasExibidas.length > 0
+                    ? receitasExibidas.length
+                    : undefined
+                }
+              />
 
               {carregando && (
                 <div className="estado-vazio">
@@ -199,7 +381,9 @@ function App() {
 
               {!carregando &&
                 !erro &&
-                receitas.length === 0 && (
+                receitas.length === 0 &&
+                !termoBuscado &&
+                !filtroExplorarAtivo && (
                   <div className="estado-vazio">
                     <div className="card-body">
                       <div className="icone-vazio">
@@ -211,17 +395,45 @@ function App() {
                       </h3>
 
                       <p>
-                        Pesquise uma receita para descobrir novos pratos.
+                        Pesquise uma receita ou escolha uma categoria para descobrir novos pratos.
                       </p>
                     </div>
                   </div>
                 )}
 
+              {mostrarSemResultados && (
+                <div className="estado-vazio">
+                  <div className="card-body">
+                    <div className="icone-vazio">
+                      🔍
+                    </div>
+
+                    <h3>
+                      Nenhuma receita encontrada
+                    </h3>
+
+                    <p>
+                      {termoBuscado && filtroExplorarAtivo
+                        ? `Não há receitas da categoria ${categoriaExplorar} para "${termoBuscado}".`
+                        : 'Tente outra pesquisa ou outra categoria.'}
+                    </p>
+
+                    {filtroExplorarAtivo && (
+                      <Button
+                        onClick={() => selecionarCategoriaExplorar(TODAS)}
+                      >
+                        Limpar filtro
+                      </Button>
+                    )}
+                  </div>
+                </div>
+              )}
+
               {!carregando &&
                 !erro &&
-                receitas.length > 0 && (
+                receitasExibidas.length > 0 && (
                   <Row className="mt-4 g-4">
-                    {receitas.map((receita) => (
+                    {receitasExibidas.map((receita) => (
                       <Col
                         key={receita.id}
                         xs={12}
@@ -230,7 +442,9 @@ function App() {
                       >
                         <CardReceita
                           receita={receita}
+                          favorita={idsFavoritos.has(receita.id)}
                           onVerDetalhes={abrirDetalhes}
+                          onToggleFavorito={alternarFavorito}
                         />
                       </Col>
                     ))}
@@ -240,31 +454,37 @@ function App() {
           )}
 
           {pagina === 'favoritos' && (
-            <Row className="mt-4">
-              <Col>
-                <div className="estado-vazio">
-                  <div className="card-body">
-                    <div className="icone-vazio">
-                      ❤️
-                    </div>
+            <>
+              {erro && (
+                <Alert
+                  variant="danger"
+                  dismissible
+                  className="mt-4"
+                  onClose={() => setErro('')}
+                >
+                  {erro}
+                </Alert>
+              )}
 
-                    <h3>
-                      Você ainda não tem favoritas
-                    </h3>
+              {favoritos.length > 0 && (
+                <Filtros
+                  id="filtro-categoria-favoritos"
+                  categorias={categoriasFavoritas}
+                  categoriaSelecionada={categoriaFavoritos}
+                  onChange={selecionarCategoriaFavoritos}
+                  totalResultados={favoritosFiltrados.length}
+                />
+              )}
 
-                    <p>
-                      Explore receitas e salve as que mais gostar.
-                    </p>
-
-                    <Button
-                      onClick={() => setPagina('explorar')}
-                    >
-                      Explorar receitas
-                    </Button>
-                  </div>
-                </div>
-              </Col>
-            </Row>
+              <Favoritos
+                favoritos={favoritosFiltrados}
+                totalFavoritos={favoritos.length}
+                onVerDetalhes={abrirDetalhes}
+                onToggleFavorito={alternarFavorito}
+                onExplorar={() => trocarPagina('explorar')}
+                onLimparFiltro={() => selecionarCategoriaFavoritos(TODAS)}
+              />
+            </>
           )}
         </section>
       </Container>
@@ -278,6 +498,12 @@ function App() {
       <ModalReceita
         receita={receitaSelecionada}
         mostrar={mostrarModal}
+        favorita={
+          receitaSelecionada
+            ? idsFavoritos.has(receitaSelecionada.idMeal)
+            : false
+        }
+        onToggleFavorito={alternarFavorito}
         onFechar={fecharModal}
       />
     </div>

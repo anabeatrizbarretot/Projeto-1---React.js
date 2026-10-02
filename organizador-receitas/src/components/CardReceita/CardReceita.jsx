@@ -1,7 +1,7 @@
 import { Card, Button } from 'react-bootstrap'
 import './CardReceita.css'
 
-function CardReceita({ receita, onVerDetalhes }) {
+function CardReceita({ receita, favorita = false, onVerDetalhes, onToggleFavorito }) {
   function abrirDetalhes() {
     onVerDetalhes(receita)
   }
@@ -13,11 +13,34 @@ function CardReceita({ receita, onVerDetalhes }) {
       role="button"
       tabIndex={0}
       onKeyDown={(event) => {
+        // ignora teclas vindas dos botões internos (favoritar / ver detalhes)
+        if (event.target !== event.currentTarget) {
+          return
+        }
+
         if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault()
           abrirDetalhes()
         }
       }}
     >
+      <button
+        type="button"
+        className={`botao-favorito ${favorita ? 'ativo' : ''}`}
+        aria-pressed={favorita}
+        aria-label={
+          favorita
+            ? `Remover ${receita.nome} dos favoritos`
+            : `Adicionar ${receita.nome} aos favoritos`
+        }
+        onClick={(event) => {
+          event.stopPropagation()
+          onToggleFavorito(receita)
+        }}
+      >
+        {favorita ? '❤️' : '🤍'}
+      </button>
+
       <Card.Img
         variant="top"
         src={receita.imagem}
