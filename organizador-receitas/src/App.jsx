@@ -8,6 +8,7 @@ import {
   buscarReceitas,
   buscarReceitaPorId,
   buscarPorCategoria,
+  buscarPorIngrediente,
   listarCategorias,
   formatarReceita
 } from './services/api'
@@ -40,7 +41,9 @@ function App() {
   const { favoritos, categoriaExplorar, categoriaFavoritos } = estado
 
   const [pesquisa, setPesquisa] = useState('')
+  const [tipoPesquisa, setTipoPesquisa] = useState('nome')
   const [termoBuscado, setTermoBuscado] = useState('')
+  const [tipoBuscado, setTipoBuscado] = useState('nome')
   const [pagina, setPagina] = useState('explorar')
   const [receitas, setReceitas] = useState([])
   const [categorias, setCategorias] = useState(CATEGORIAS_PADRAO)
@@ -127,14 +130,19 @@ function App() {
     setErro('')
 
     try {
-      const dados = await buscarReceitas(pesquisa)
+      const termo = pesquisa.trim()
+
+      const dados = tipoPesquisa === 'ingrediente'
+        ? await buscarPorIngrediente(termo)
+        : await buscarReceitas(termo)
 
       if (requisicao !== requisicaoAtual.current) {
         return
       }
 
       setReceitas(dados.map(formatarReceita))
-      setTermoBuscado(pesquisa.trim())
+      setTermoBuscado(termo)
+      setTipoBuscado(tipoPesquisa)
     } catch (error) {
       if (requisicao !== requisicaoAtual.current) {
         return
@@ -240,6 +248,7 @@ function App() {
   }
 
   const filtroExplorarAtivo = categoriaExplorar !== TODAS
+
   const mostrarSemResultados =
     !carregando &&
     !erro &&
@@ -267,6 +276,7 @@ function App() {
               onClick={() => trocarPagina('favoritos')}
             >
               Favoritas
+
               {favoritos.length > 0 && (
                 <Badge pill className="contador-favoritos">
                   {favoritos.length}
@@ -299,9 +309,28 @@ function App() {
             }}
             className="form-pesquisa"
           >
+            <Form.Select
+              className="tipo-pesquisa"
+              value={tipoPesquisa}
+              onChange={(event) => setTipoPesquisa(event.target.value)}
+              aria-label="Escolha o tipo de pesquisa"
+            >
+              <option value="nome">
+                Nome da receita
+              </option>
+
+              <option value="ingrediente">
+                Ingrediente
+              </option>
+            </Form.Select>
+
             <Form.Control
               type="text"
-              placeholder="Digite o nome de uma receita..."
+              placeholder={
+                tipoPesquisa === 'ingrediente'
+                  ? 'Digite um ingrediente (ex.: chicken)...'
+                  : 'Digite o nome de uma receita...'
+              }
               value={pesquisa}
               onChange={(event) => setPesquisa(event.target.value)}
             />
@@ -414,13 +443,17 @@ function App() {
 
                     <p>
                       {termoBuscado && filtroExplorarAtivo
-                        ? `Não há receitas da categoria ${categoriaExplorar} para "${termoBuscado}".`
-                        : 'Tente outra pesquisa ou outra categoria.'}
+                        ? `Não há receitas da categoria ${categoriaExplorar} para ${tipoBuscado === 'ingrediente' ? 'o ingrediente' : 'a busca'} "${termoBuscado}".`
+                        : termoBuscado
+                          ? `Nenhuma receita encontrada para ${tipoBuscado === 'ingrediente' ? 'o ingrediente' : 'a busca'} "${termoBuscado}". Tente outro termo.`
+                          : 'Tente outra pesquisa ou outra categoria.'}
                     </p>
 
                     {filtroExplorarAtivo && (
                       <Button
-                        onClick={() => selecionarCategoriaExplorar(TODAS)}
+                        onClick={() =>
+                          selecionarCategoriaExplorar(TODAS)
+                        }
                       >
                         Limpar filtro
                       </Button>
@@ -482,7 +515,9 @@ function App() {
                 onVerDetalhes={abrirDetalhes}
                 onToggleFavorito={alternarFavorito}
                 onExplorar={() => trocarPagina('explorar')}
-                onLimparFiltro={() => selecionarCategoriaFavoritos(TODAS)}
+                onLimparFiltro={() =>
+                  selecionarCategoriaFavoritos(TODAS)
+                }
               />
             </>
           )}

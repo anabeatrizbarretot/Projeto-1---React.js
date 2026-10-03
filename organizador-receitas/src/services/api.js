@@ -14,6 +14,27 @@ export async function buscarReceitas(nome) {
   return dados.meals || []
 }
 
+export async function buscarPorIngrediente(ingrediente) {
+  const resposta = await fetch(
+    `${API_URL}/filter.php?i=${encodeURIComponent(ingrediente)}`
+  )
+
+  if (!resposta.ok) {
+    throw new Error('Erro ao buscar receitas por ingrediente.')
+  }
+
+  const dados = await resposta.json()
+  const receitas = dados.meals || []
+
+  // O endpoint filter.php retorna apenas id, nome e imagem.
+  // Buscamos os detalhes para manter categoria, favoritos e filtros funcionando.
+  const receitasCompletas = await Promise.all(
+    receitas.map((receita) => buscarReceitaPorId(receita.idMeal))
+  )
+
+  return receitasCompletas.filter(Boolean)
+}
+
 export async function buscarReceitaPorId(id) {
   const resposta = await fetch(
     `${API_URL}/lookup.php?i=${id}`
@@ -51,14 +72,12 @@ export async function buscarPorCategoria(categoria) {
 
   const dados = await resposta.json()
 
-  // filter.php não devolve a categoria, então ela é adicionada aqui
   return (dados.meals || []).map((receita) => ({
     ...receita,
     strCategory: categoria
   }))
 }
 
-// Converte o formato da API (strMeal, idMeal...) para o formato usado nos cards
 export function formatarReceita(receita) {
   return {
     id: receita.idMeal,

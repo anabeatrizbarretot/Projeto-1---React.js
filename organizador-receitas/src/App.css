@@ -92,7 +92,8 @@
   margin: 40px auto 0;
 }
 
-.form-pesquisa .form-control {
+.form-pesquisa .form-control,
+.form-pesquisa .form-select {
   min-height: 64px;
   font-size: 19px;
   padding: 15px 20px;
@@ -101,7 +102,8 @@
   box-shadow: none;
 }
 
-.form-pesquisa .form-control:focus {
+.form-pesquisa .form-control:focus,
+.form-pesquisa .form-select:focus {
   border-color: #438454;
   box-shadow: 0 0 0 4px rgba(67, 132, 84, 0.12);
 }
