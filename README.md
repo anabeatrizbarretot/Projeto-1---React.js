@@ -1,279 +1,388 @@
 # 🍳 Organizador de Receitas
 
-Aplicação web desenvolvida para a disciplina **Programação Web Fullstack**, utilizando **React.js**, com o objetivo de facilitar a pesquisa, organização e visualização de receitas.
+Aplicação web desenvolvida para a disciplina **Programação Web Fullstack**, utilizando **React.js**, com o objetivo de facilitar a pesquisa, visualização e organização de receitas.
 
-O sistema permite pesquisar receitas por nome ou ingrediente, filtrar por categoria, visualizar detalhes e adicionar receitas aos favoritos.
+O sistema permite pesquisar receitas **por nome ou ingrediente**, explorar receitas por categoria, visualizar informações detalhadas e salvar receitas favoritas.
 
 ---
 
 ## 📚 Sobre o projeto
 
-O **Organizador de Receitas** é uma aplicação desenvolvida no formato **SPA (Single Page Application)**, na qual as funcionalidades são executadas em uma única página, sem a necessidade de recarregar a aplicação durante a navegação.
+O **Organizador de Receitas** é uma aplicação desenvolvida no formato **SPA (Single Page Application)**, permitindo que o usuário utilize as funcionalidades do sistema sem recarregar a página durante a navegação.
 
-Os dados das receitas são obtidos por meio de uma **API JSON aberta**, utilizando requisições AJAX.
+Os dados das receitas são obtidos por meio da **TheMealDB API**, uma API JSON pública, utilizando requisições assíncronas através da **Fetch API**.
 
-O projeto foi desenvolvido como parte da disciplina **Programação Web Fullstack** e tem como objetivo aplicar conceitos de desenvolvimento frontend utilizando React.js.
+O projeto aplica conceitos de desenvolvimento frontend com React.js, incluindo:
+
+- Componentização;
+- Hooks;
+- Gerenciamento de estados;
+- Requisições assíncronas;
+- Consumo de API externa;
+- Persistência local de dados;
+- Responsividade;
+- Tratamento de erros e estados de carregamento.
 
 ---
 
-## 🎯 Objetivos
-
-### Objetivo geral
+## 🎯 Objetivo
 
 Desenvolver uma aplicação web utilizando React.js capaz de consumir dados de uma API externa e disponibilizar funcionalidades para pesquisa, filtragem, visualização e organização de receitas.
 
 ### Objetivos específicos
 
-* Pesquisar receitas pelo nome;
-* Pesquisar receitas por ingrediente;
-* Consultar dados de uma API JSON;
-* Exibir receitas encontradas;
-* Visualizar detalhes das receitas;
-* Filtrar receitas por categoria;
-* Adicionar receitas aos favoritos;
-* Remover receitas dos favoritos;
-* Visualizar a lista de receitas favoritas;
-* Trabalhar com estados utilizando `useReducer`;
-* Utilizar uma biblioteca externa junto ao React.js;
-* Desenvolver uma interface responsiva e simples de utilizar.
+- Pesquisar receitas pelo nome;
+- Pesquisar receitas por ingrediente;
+- Consultar dados de uma API JSON;
+- Exibir receitas encontradas;
+- Explorar receitas por categoria;
+- Visualizar detalhes das receitas;
+- Adicionar receitas aos favoritos;
+- Remover receitas dos favoritos;
+- Visualizar a lista de receitas favoritas;
+- Filtrar receitas favoritas por categoria;
+- Persistir os favoritos no navegador;
+- Utilizar o Hook `useReducer`;
+- Utilizar uma biblioteca externa integrada ao React.js;
+- Disponibilizar uma interface responsiva e de fácil utilização.
 
 ---
 
 ## 🚀 Funcionalidades
 
-### 🔎 Pesquisa por receita
+### 🔎 Pesquisa por nome
 
-O usuário poderá pesquisar receitas pelo nome utilizando a barra de pesquisa.
+O usuário pode pesquisar receitas informando o nome de um prato.
+
+A aplicação consulta a TheMealDB e apresenta as receitas encontradas.
+
+---
 
 ### 🥕 Pesquisa por ingrediente
 
-O usuário poderá informar um ingrediente para encontrar receitas que utilizem esse ingrediente.
-
-### 🗂️ Filtro por categoria
-
-As receitas poderão ser filtradas de acordo com suas categorias.
+O usuário pode selecionar a opção de pesquisa por ingrediente e informar um ingrediente para localizar receitas que o utilizem.
 
 Exemplos:
 
-* Beef
-* Chicken
-* Dessert
-* Pasta
-* Seafood
-* Vegetarian
+- Chicken;
+- Beef;
+- Salmon;
+- Garlic.
+
+A busca por ingrediente utiliza os recursos disponibilizados pela TheMealDB API.
+
+---
+
+### 🗂️ Exploração por categoria
+
+O usuário pode visualizar receitas de acordo com as categorias disponibilizadas pela API.
+
+Exemplos:
+
+- Beef;
+- Breakfast;
+- Chicken;
+- Dessert;
+- Pasta;
+- Seafood;
+- Vegetarian.
+
+Os filtros também podem ser utilizados nos resultados das pesquisas.
+
+---
 
 ### 📖 Detalhes da receita
 
-Ao selecionar uma receita, o sistema exibirá informações como:
+Ao selecionar uma receita, o sistema apresenta seus detalhes em uma janela modal, incluindo informações como:
 
-* Nome;
-* Imagem;
-* Categoria;
-* Origem;
-* Ingredientes;
-* Medidas;
-* Modo de preparo.
+- Nome;
+- Imagem;
+- Categoria;
+- Origem;
+- Ingredientes;
+- Medidas;
+- Modo de preparo.
+
+---
 
 ### ❤️ Favoritos
 
-O usuário poderá adicionar receitas aos favoritos e removê-las quando desejar.
+O usuário pode adicionar ou remover receitas da lista de favoritos.
+
+Os favoritos são armazenados utilizando o **localStorage** do navegador, permitindo que permaneçam salvos mesmo após a atualização ou fechamento da página.
+
+---
 
 ### ⭐ Lista de favoritos
 
-O sistema terá uma área para visualizar somente as receitas marcadas como favoritas.
+A aplicação possui uma área específica para visualizar as receitas adicionadas aos favoritos.
 
-### ⏳ Carregamento
+Também é possível filtrar as receitas favoritas por categoria.
 
-Enquanto os dados estiverem sendo buscados na API, o sistema apresentará uma indicação de carregamento.
+---
+
+### ⏳ Estado de carregamento
+
+Durante as requisições realizadas à API, a aplicação apresenta uma mensagem informando que as receitas estão sendo carregadas.
+
+---
 
 ### ⚠️ Tratamento de erros
 
-Caso ocorra algum problema na comunicação com a API, o sistema apresentará uma mensagem informando o usuário.
+Caso ocorra algum problema durante a comunicação com a API, o sistema informa o usuário por meio de uma mensagem de erro.
+
+Também são apresentadas mensagens quando nenhuma receita é encontrada para determinada pesquisa ou filtro.
 
 ---
 
 ## 🛠️ Tecnologias utilizadas
 
-| Tecnologia       | Utilização                                  |
-| ---------------- | ------------------------------------------- |
-| React.js         | Desenvolvimento da aplicação                |
-| JavaScript       | Lógica do sistema                           |
-| Vite             | Ferramenta de criação e execução do projeto |
-| AJAX / Fetch API | Comunicação com a API                       |
-| TheMealDB API    | Fonte dos dados das receitas                |
-| useReducer       | Gerenciamento dos estados da aplicação      |
-| React Bootstrap  | Componentes e estilização da interface      |
-| CSS              | Personalização da interface                 |
-| Git              | Controle de versão                          |
-| GitHub           | Hospedagem do código                        |
+| Tecnologia | Utilização |
+| --- | --- |
+| **React.js** | Desenvolvimento da aplicação e componentização |
+| **JavaScript** | Lógica e funcionamento do sistema |
+| **Vite** | Ambiente de desenvolvimento e build |
+| **Fetch API / AJAX** | Comunicação assíncrona com a API |
+| **TheMealDB API** | Fonte dos dados das receitas |
+| **useReducer** | Gerenciamento dos favoritos e filtros |
+| **useState** | Gerenciamento dos estados da interface |
+| **useEffect** | Execução de efeitos e sincronização dos favoritos |
+| **useMemo** | Otimização e processamento de listas |
+| **useRef** | Controle das requisições realizadas |
+| **React Bootstrap** | Componentes da interface |
+| **Bootstrap** | Estrutura visual e responsividade |
+| **CSS** | Personalização da interface |
+| **localStorage** | Persistência das receitas favoritas |
+| **Git** | Controle de versão |
+| **GitHub** | Hospedagem e versionamento do código |
 
 ---
 
 ## 🌐 API utilizada
 
-O projeto utiliza a **TheMealDB API**, uma API pública que disponibiliza informações sobre receitas.
+O projeto utiliza a **TheMealDB API**, uma API pública voltada para consulta de receitas.
 
-A API fornece dados como:
+Documentação oficial:
 
-* nome da receita;
-* imagem;
-* categoria;
-* origem;
-* ingredientes;
-* medidas;
-* modo de preparo.
+https://www.themealdb.com/api.php
 
-Documentação da API:
+Entre os recursos da API utilizados pelo projeto estão:
 
+```text
+search.php?s=
+```
 
+Pesquisa de receitas pelo nome.
+
+```text
+filter.php?i=
+```
+
+Pesquisa de receitas por ingrediente.
+
+```text
+filter.php?c=
+```
+
+Pesquisa de receitas por categoria.
+
+```text
+lookup.php?i=
+```
+
+Consulta dos detalhes de uma receita utilizando seu identificador.
+
+```text
+list.php?c=list
+```
+
+Consulta da lista de categorias disponíveis.
 
 ---
 
-## ⚛️ Hook utilizado
+## ⚛️ Hook principal — useReducer
 
-### useReducer
+O Hook selecionado para o projeto foi o **`useReducer`**.
 
-O projeto utiliza o Hook `useReducer` para auxiliar no gerenciamento dos estados da aplicação.
+Ele é utilizado para centralizar o gerenciamento de estados relacionados aos:
 
-Ele poderá ser utilizado para controlar estados como:
+- Favoritos;
+- Adição de favoritos;
+- Remoção de favoritos;
+- Categoria selecionada na página de exploração;
+- Categoria selecionada na página de favoritos.
 
-* receitas;
-* receitas favoritas;
-* carregamento;
-* erros;
-* resultados das pesquisas;
-* categoria selecionada.
+As ações utilizadas pelo reducer incluem:
 
-O uso do `useReducer` permite organizar melhor as alterações de estado que acontecem durante a utilização do sistema.
+```text
+ADICIONAR_FAVORITO
+REMOVER_FAVORITO
+DEFINIR_CATEGORIA
+```
+
+A utilização do `useReducer` permite concentrar as regras de alteração desses estados em um único local, facilitando a organização e manutenção do código.
 
 ---
 
-## 🎨 Biblioteca utilizada
+## 🎨 Biblioteca externa — React Bootstrap
 
-### React Bootstrap
+A biblioteca externa escolhida para o projeto foi o **React Bootstrap**.
 
-A biblioteca **React Bootstrap** será utilizada para auxiliar na construção da interface.
+Ela é utilizada na construção de diferentes elementos da interface, incluindo:
 
-Ela poderá ser utilizada em componentes como:
+- Navbar;
+- Formulários;
+- Botões;
+- Grid;
+- Modal;
+- Alertas;
+- Badges;
+- Containers.
 
-* Navbar;
-* Cards;
-* Buttons;
-* Forms;
-* Modal;
-* Alert;
-* Spinner;
-* Grid.
-
-A utilização da biblioteca também facilita a criação de uma interface responsiva.
+O React Bootstrap também auxilia na criação de uma interface responsiva integrada aos componentes React.
 
 ---
 
 ## 📱 Responsividade
 
-A aplicação será desenvolvida para funcionar em diferentes tamanhos de tela, incluindo:
+A aplicação foi desenvolvida para se adaptar a diferentes tamanhos de tela, incluindo:
 
-* 💻 Computadores;
-* 📱 Celulares;
-* 📲 Tablets.
+- 💻 Computadores;
+- 📲 Tablets;
+- 📱 Celulares.
 
-A interface será organizada para que os componentes se adaptem ao tamanho disponível da tela.
+Foram utilizados recursos do Bootstrap e estilos CSS próprios para adaptar os componentes e elementos da interface conforme o espaço disponível.
+
+---
+
+## 🤖 Ferramentas de apoio
+
+Durante o desenvolvimento do projeto, foram utilizadas ferramentas de Inteligência Artificial como apoio pontual para:
+
+- Esclarecimento de dúvidas relacionadas ao React.js;
+- Revisão de trechos de código;
+- Identificação de possíveis melhorias;
+- Apoio na organização e revisão da documentação.
+
+As decisões de implementação, testes, validação e integração das funcionalidades foram realizadas pela equipe responsável pelo projeto.
 
 ---
 
 ## 📋 Requisitos do sistema
 
-Os requisitos do projeto estão documentados na pasta:
+Os requisitos funcionais e não funcionais do projeto estão disponíveis na pasta:
 
 ```text
-requisitos/
+Requisitos de Sistema/
 ```
 
-Nela estão disponíveis:
+### Requisitos funcionais implementados
 
-* Requisitos Funcionais;
-* Requisitos Não Funcionais.
+- Pesquisa de receitas por nome;
+- Pesquisa de receitas por ingrediente;
+- Consulta à API;
+- Exibição dos resultados;
+- Visualização dos detalhes das receitas;
+- Exploração e filtro por categoria;
+- Adição de receitas aos favoritos;
+- Remoção de receitas dos favoritos;
+- Visualização dos favoritos;
+- Filtro das receitas favoritas;
+- Indicação de carregamento;
+- Tratamento de erros;
+- Mensagem para pesquisas sem resultados.
 
-### Requisitos funcionais principais
+### Requisitos não funcionais
 
-* Pesquisar receitas;
-* Consultar a API;
-* Exibir receitas;
-* Visualizar detalhes;
-* Favoritar receitas;
-* Remover favoritos;
-* Visualizar favoritos;
-* Filtrar por categoria;
-* Buscar por ingrediente;
-* Informar carregamento;
-* Informar erros.
-
-### Requisitos não funcionais principais
-
-* React.js;
-* SPA;
-* AJAX;
-* API JSON;
-* `useReducer`;
-* Biblioteca externa;
-* Responsividade;
-* Organização do código;
-* GitHub;
-* Usabilidade;
-* Desempenho;
-* Tratamento de erros.
+- React.js;
+- SPA;
+- AJAX / Fetch API;
+- API JSON;
+- `useReducer`;
+- Biblioteca externa;
+- Responsividade;
+- Componentização;
+- Organização do código;
+- Controle de versão utilizando Git e GitHub;
+- Usabilidade;
+- Tratamento de erros.
 
 ---
 
 ## 📁 Estrutura do projeto
 
+```text
+Projeto-1---React.js/
+│
+├── README.md
+│
+├── Requisitos de Sistema/
+│   ├── Requisitos Funcionais.md
+│   └── Requisitos Não Funcionais.md
+│
+└── organizador-receitas/
+    │
+    ├── src/
+    │   ├── assets/
+    │   │   └── hero.png
+    │   │
+    │   ├── components/
+    │   │   ├── CardReceita/
+    │   │   │   ├── CardReceita.jsx
+    │   │   │   └── CardReceita.css
+    │   │   │
+    │   │   ├── Favoritos/
+    │   │   │   ├── Favoritos.jsx
+    │   │   │   └── Favoritos.css
+    │   │   │
+    │   │   ├── Filtros/
+    │   │   │   ├── Filtros.jsx
+    │   │   │   └── Filtros.css
+    │   │   │
+    │   │   └── ModalReceita/
+    │   │       ├── ModalReceita.jsx
+    │   │       └── ModalReceita.css
+    │   │
+    │   ├── reducers/
+    │   │   └── receitasReducer.js
+    │   │
+    │   ├── services/
+    │   │   └── api.js
+    │   │
+    │   ├── App.jsx
+    │   ├── App.css
+    │   ├── index.css
+    │   └── main.jsx
+    │
+    ├── index.html
+    ├── package.json
+    ├── package-lock.json
+    └── vite.config.js
+```
+
+---
 
 ## 👥 Equipe
 
-| Integrante                       | Responsabilidade |
-| -------------------------------- | ---------------- |
-| **Ana Beatriz Barreto Teixeira** | Interface e detalhes  |
-| **Livia Pontes Argenton**        | Favoritos e filtros   |
-| **João Miguel Dias Rosa**        | API e pesquisa        |
+| Integrante | Responsabilidade |
+| --- | --- |
+| **Ana Beatriz Barreto Teixeira** | Interface e detalhes das receitas |
+| **Livia Pontes Argenton** | Favoritos e filtros |
+| **João Miguel Dias Rosa** | Integração com a API e pesquisas |
 
-Cada integrante será responsável por uma parte definida da aplicação e deverá registrar suas atividades por meio de commits no GitHub.
-
----
-
-## 🌿 Organização dos commits
-
-Durante o desenvolvimento serão utilizados commits para registrar as atividades realizadas por cada integrante.
-
-Exemplos:
-
-```text
-feat: adiciona pesquisa de receitas
-feat: cria componente CardReceita
-feat: implementa sistema de favoritos
-feat: adiciona filtro por categoria
-fix: corrige busca por ingrediente
-style: ajusta responsividade
-docs: atualiza documentação da API
-```
+As atividades desenvolvidas pelos integrantes foram registradas por meio de commits no repositório do projeto.
 
 ---
 
-## 📌 Organização das branches
+## 🌿 Controle de versão
 
-Quando necessário, poderão ser utilizadas branches para separar o desenvolvimento das funcionalidades.
+O projeto utiliza **Git e GitHub** para controle de versão.
 
-Exemplo:
+Os commits realizados durante o desenvolvimento registram a evolução e a implementação das diferentes funcionalidades da aplicação.
 
-```text
-main
-│
-├── feature/pesquisa
-├── feature/favoritos
-├── feature/filtros
-└── feature/interface
-```
+Repositório:
 
-A branch `main` será utilizada para manter a versão principal e integrada do projeto.
+https://github.com/anabeatrizbarretot/Projeto-1---React.js
 
 ---
 
@@ -282,13 +391,13 @@ A branch `main` será utilizada para manter a versão principal e integrada do p
 ### 1. Clonar o repositório
 
 ```bash
-git clone URL_DO_REPOSITORIO
+git clone https://github.com/anabeatrizbarretot/Projeto-1---React.js.git
 ```
 
-### 2. Entrar na pasta
+### 2. Acessar a pasta da aplicação
 
 ```bash
-cd organizador-de-receitas
+cd Projeto-1---React.js/organizador-receitas
 ```
 
 ### 3. Instalar as dependências
@@ -303,9 +412,9 @@ npm install
 npm run dev
 ```
 
-### 5. Acessar no navegador
+### 5. Acessar a aplicação
 
-O Vite apresentará o endereço local da aplicação, normalmente:
+Após iniciar o projeto, o Vite apresentará no terminal o endereço local da aplicação, normalmente:
 
 ```text
 http://localhost:5173
@@ -313,54 +422,55 @@ http://localhost:5173
 
 ---
 
-## 📌 Status do projeto
+## 🧪 Comandos disponíveis
 
-🚧 **Em desenvolvimento**
+Executar o ambiente de desenvolvimento:
 
-### Etapas planejadas
-
-* [x] Definição do tema
-* [x] Definição dos requisitos
-* [x] Escolha da API
-* [x] Escolha do Hook
-* [x] Escolha da biblioteca
-* [ ] Configuração do projeto React
-* [ ] Implementação da API
-* [ ] Implementação da pesquisa
-* [ ] Implementação dos filtros
-* [ ] Implementação dos favoritos
-* [ ] Implementação dos detalhes das receitas
-* [ ] Responsividade
-* [ ] Testes
-* [ ] Documentação final
-* [ ] Apresentação
-
----
-
-## 🤖 Uso de ferramentas de apoio e IA
-
-Durante o desenvolvimento do projeto poderão ser utilizadas ferramentas de apoio, incluindo Inteligência Artificial, para auxiliar na pesquisa, compreensão de conceitos, identificação de erros e desenvolvimento do código.
-
-Todo uso de ferramentas de IA será documentado de acordo com as orientações da disciplina.
-
-As ferramentas utilizadas e suas respectivas contribuições serão registradas na documentação do projeto.
-
----
-
-## 📄 Documentação
-
-A documentação do projeto será organizada nas seguintes áreas:
-
-```text
-documentacao/
+```bash
+npm run dev
 ```
 
-### Documentos previstos
+Gerar a versão de produção:
 
-* `API.md` — informações sobre a API utilizada;
-* `Hook.md` — explicação sobre o uso do `useReducer`;
-* `Biblioteca.md` — informações sobre o React Bootstrap;
-* `Uso-de-IA.md` — ferramentas de IA utilizadas durante o desenvolvimento.
+```bash
+npm run build
+```
+
+Executar a verificação do código:
+
+```bash
+npm run lint
+```
+
+Visualizar a versão de produção localmente:
+
+```bash
+npm run preview
+```
+
+---
+
+## 📌 Status do projeto
+
+✅ **Aplicação funcional concluída para o Projeto 1.**
+
+Funcionalidades implementadas:
+
+- [x] Configuração do projeto React;
+- [x] Integração com a TheMealDB API;
+- [x] Pesquisa por nome;
+- [x] Pesquisa por ingrediente;
+- [x] Exploração por categoria;
+- [x] Filtros;
+- [x] Sistema de favoritos;
+- [x] Persistência dos favoritos;
+- [x] Detalhes das receitas;
+- [x] Estados de carregamento;
+- [x] Tratamento de erros;
+- [x] Responsividade;
+- [x] Organização em componentes;
+- [x] Controle de versão no GitHub;
+- [x] Documentação principal do projeto.
 
 ---
 
@@ -368,16 +478,16 @@ documentacao/
 
 **Programação Web Fullstack**
 
-**Projeto 1 – ReactJS**
+**Projeto 1 — React.js**
 
-Desenvolvido para fins acadêmicos.
+### Informações acadêmicas
+
+**Curso:** Análise e Desenvolvimento de Sistemas  
+**Instituição:** Universidade Tecnológica Federal do Paraná — UTFPR  
+**Projeto:** Organizador de Receitas  
+**Tecnologia principal:** React.js  
+**Status:** Aplicação funcional concluída
 
 ---
 
-## 📅 Informações do projeto
-
-**Curso:** Análise e Desenvolvimento de Sistemas
-**Instituição:** UTFPR
-**Projeto:** Organizador de Receitas
-**Tecnologia principal:** React.js
-**Status:** Em desenvolvimento
+Desenvolvido para fins acadêmicos.
